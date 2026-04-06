@@ -260,8 +260,9 @@ import "../styles/global.css";
         <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Ready to automate?</h2>
         <p class="text-lux-400 mb-10 text-lg">Join the waitlist and be the first to know when we launch. Or book a call to discuss your needs.</p>
 
-        <!-- Email Capture -->
-        <form id="waitlist-form" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
+        <!-- Email Capture (Netlify Forms) -->
+        <form id="waitlist-form" name="waitlist" method="POST" data-netlify="true" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
+          <input type="hidden" name="form-name" value="waitlist" />
           <input
             type="email"
             name="email"
@@ -269,11 +270,12 @@ import "../styles/global.css";
             required
             class="flex-1 px-4 py-3 rounded-lg bg-lux-800 border border-lux-700 text-lux-50 placeholder:text-lux-500 focus:outline-none focus:border-lux-500 text-sm"
           />
-          <button type="submit" class="px-6 py-3 bg-white text-lux-900 rounded-lg font-medium text-sm hover:bg-lux-100 transition-colors whitespace-nowrap">
+          <button type="submit" id="waitlist-btn" class="px-6 py-3 bg-white text-lux-900 rounded-lg font-medium text-sm hover:bg-lux-100 transition-colors whitespace-nowrap">
             Join Waitlist
           </button>
         </form>
         <p id="form-success" class="text-accent-light text-sm hidden">Thanks! We'll be in touch soon.</p>
+        <p id="form-error" class="text-red-400 text-sm hidden">Something went wrong. Please try again.</p>
 
         <div class="flex items-center gap-4 justify-center my-8">
           <div class="h-px bg-lux-700 w-16"></div>
@@ -301,16 +303,31 @@ import "../styles/global.css";
     </footer>
 
     <script>
-      const form = document.getElementById('waitlist-form');
+      const form = document.getElementById('waitlist-form') as HTMLFormElement | null;
       const success = document.getElementById('form-success');
-      form?.addEventListener('submit', (e) => {
+      const error = document.getElementById('form-error');
+      const btn = document.getElementById('waitlist-btn') as HTMLButtonElement | null;
+
+      form?.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const formData = new FormData(form as HTMLFormElement);
-        const email = formData.get('email');
-        console.log('Waitlist signup:', email);
-        (form as HTMLFormElement).reset();
-        form.classList.add('hidden');
-        success?.classList.remove('hidden');
+        error?.classList.add('hidden');
+        if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
+
+        try {
+          const body = new URLSearchParams(new FormData(form) as any).toString();
+          const res = await fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body,
+          });
+          if (!res.ok) throw new Error('Network error');
+          form.reset();
+          form.classList.add('hidden');
+          success?.classList.remove('hidden');
+        } catch {
+          error?.classList.remove('hidden');
+          if (btn) { btn.disabled = false; btn.textContent = 'Join Waitlist'; }
+        }
       });
     </script>
 
