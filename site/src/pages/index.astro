@@ -12,6 +12,8 @@ import "../styles/global.css";
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Cal.com embed -->
+    <script src="https://app.cal.com/embed/embed.js" async></script>
   </head>
   <body class="bg-lux-50 text-lux-900 font-sans antialiased">
 
@@ -283,9 +285,13 @@ import "../styles/global.css";
           <div class="h-px bg-lux-700 w-16"></div>
         </div>
 
-        <a href="mailto:hello@getlux.com" class="inline-block px-8 py-3.5 border border-lux-600 text-lux-200 rounded-lg font-medium text-sm hover:border-lux-400 transition-colors">
+        <button
+          data-cal-link="CALCOM_USERNAME/discovery-call"
+          data-cal-config='{"layout":"month_view","theme":"dark"}'
+          class="inline-block px-8 py-3.5 border border-lux-600 text-lux-200 rounded-lg font-medium text-sm hover:border-lux-400 transition-colors cursor-pointer bg-transparent"
+        >
           Book a Discovery Call
-        </a>
+        </button>
       </div>
     </section>
 
