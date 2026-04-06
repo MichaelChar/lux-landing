@@ -262,9 +262,12 @@ import "../styles/global.css";
         <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Ready to automate?</h2>
         <p class="text-lux-400 mb-10 text-lg">Join the waitlist and be the first to know when we launch. Or book a call to discuss your needs.</p>
 
-        <!-- Email Capture (Netlify Forms) -->
-        <form id="waitlist-form" name="waitlist" method="POST" data-netlify="true" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
-          <input type="hidden" name="form-name" value="waitlist" />
+        <!-- Email Capture (Formsubmit.co — forwards to configured email) -->
+        <form id="waitlist-form" action="https://formsubmit.co/hello@getlux.ai" method="POST" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
+          <input type="hidden" name="_subject" value="New Lux Waitlist Signup" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_template" value="table" />
+          <input type="text" name="_honey" style="display:none" />
           <input
             type="email"
             name="email"
@@ -320,11 +323,10 @@ import "../styles/global.css";
         if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
 
         try {
-          const body = new URLSearchParams(new FormData(form) as any).toString();
-          const res = await fetch('/', {
+          const res = await fetch(form.action, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body,
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(Object.fromEntries(new FormData(form))),
           });
           if (!res.ok) throw new Error('Network error');
           form.reset();
